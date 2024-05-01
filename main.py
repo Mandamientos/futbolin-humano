@@ -5,12 +5,8 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import random
 import serial
+import socket
 
-# Abrir el puerto donde está conectada la Raspberry
-
-#ser = serial.Serial(port='COM3', baudrate=10000)
-
-# Menú principal función crear el menú prinicipal
 def mainMenu(window_width, window_height, Logo):
 
     root.title("Menú Principal")
@@ -25,8 +21,31 @@ def mainMenu(window_width, window_height, Logo):
     aboutButton = Button(container, font=("Champions", 35), text="ACERCA")
     aboutButton.place(x=510, y=650)
 
+    testModulesBtn = Button(container, font=("Champions", 35), text="PROBAR", command=lambda:[container.destroy(), testMenu(window_width, window_height)])
+    testModulesBtn.place(x=970, y=870)
+
     verLabel = Label(container, font=("Champions", 25), text="VERSIÓN 1.0", bg="#14223E", fg="#FFFFFF")
     verLabel.place(x=20, y=950)
+
+
+def testMenu(window_width, window_height):
+
+    root.title("Prueba de modulos")
+
+    container = Canvas(root, width=f"{window_width}", height=f"{window_height}", background="#14223E", highlightbackground="#14223E")
+    container.pack()
+
+    stimulusLabel = Label(container, text="Escriba un estimulo", font=("Champions", 35), background="#14223E", fg="#FFFFFF")
+    stimulusLabel.place(x=410, y=150)
+
+    stimulus = StringVar()
+    entryStimulus = Entry(container, textvariable=stimulus, font=("Champions", 35)).place(x=350, y=250)
+
+    sendBtn = Button(container, text='ENVIAR', font=("Champions", 35), command=lambda:[sendToPico(stimulus.get())])
+    sendBtn.place(x=500, y=350)
+
+    sendBtn = Button(container, text='?', font=("Champions", 35), command=lambda:[sendToPico("testCircuit"), threadPicoRead.start()])
+    sendBtn.place(x=500, y=450)
 
 
 # Menú configuración inicial
@@ -77,19 +96,26 @@ def decideSides():
     visiting = teams[0]
     print("Local:", local, "\nVisitante:", visiting)
 
-# def readPico():
-#     global ser, datos
-#     while True:
-#         data = ser.readline()
-#         if (data.decode("UTF-8").strip())[0] == '>':
-#             pass
-#         else:
-#             datos.add(data.decode("UTF-8").strip())
-#         print(datos)
-#
-# def sendPico():
-#         dato = "hola()\r\n"
-#         ser.write(dato.encode())
+
+def sendToPico(message):
+    #btn["state"] = "disabled"
+    s = socket.socket()
+    s.bind((ip_server, server_port))
+    s.listen(1)
+    conexion, direccion = s.accept()
+    conexion.send(message.encode())
+    print("Mensaje enviado.")
+
+def readFromPico():
+    while enabled:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind((ip_server, server_port))
+        s.listen(1)
+        conexion, direccion = s.accept()
+        respuesta = conexion.recv(1024).decode()
+        print(respuesta)
+        time.sleep(1)
+
 
 root = Tk()
 
@@ -122,7 +148,13 @@ secondTeam = None
 local = None
 visiting = None
 
-#threadPicoRead = threading.Thread(target=readPico)
+# Conexion con la Raspberry Pi Pico
+
+ip_server = "192.168.18.234"
+server_port = 50000
+enabled = True
+
+threadPicoRead = threading.Thread(target=readFromPico)
 #threadPicoRead.start()
 
 #threadPicoSend = threading.Thread(target=sendPico)
