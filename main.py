@@ -8,6 +8,7 @@ import serial
 import socket
 import os
 import natsort
+import json
 
 def mainMenu(window_width, window_height, Logo):
 
@@ -21,13 +22,112 @@ def mainMenu(window_width, window_height, Logo):
     playButton.place(x=520, y=500)
 
     aboutButton = Button(container, font=("Champions", 35), text="ACERCA")
-    aboutButton.place(x=510, y=650)
+    aboutButton.place(x=510, y=750)
+
+    stadisticsBtn = Button(container, font=("Champions", 35), text="ESTADÍSTICAS", command=lambda:[container.destroy(), stadisticsMenu("Manchester City")])
+    stadisticsBtn.place(x=450, y=625)
 
     testModulesBtn = Button(container, font=("Champions", 35), text="PROBAR", command=lambda:[container.destroy(), testMenu(window_width, window_height)])
     testModulesBtn.place(x=970, y=870)
 
     verLabel = Label(container, font=("Champions", 25), text="VERSIÓN 1.0", bg="#14223E", fg="#FFFFFF")
     verLabel.place(x=20, y=950)
+
+def stadisticsMenu(team):
+    global logoMCI_est, logoBAR_est, logoRMA_est, totalGoals, totalSaves, totalFailed, topStriker
+    container = Canvas(root, width=f"{window_width}", height=f"{window_height}", background="#14223E", highlightbackground="#14223E")
+    container.pack()
+
+    backBtn = Button(root, font=("Champions", 35), text="VOLVER", bg="#3562A6", fg="#FFFFFF", command=lambda:[container.destroy(), mainMenu(window_width, window_height, Logo)])
+    backBtn.place(x=1000, y=900)
+
+    root.title("Estadísticas")
+
+    nav = Canvas(container, height=1200, width=300, background="#3562A6", highlightbackground="#3562A6")
+    nav.place(x=0, y=0)
+
+    titleLabel = Label(nav, font=("Champions", 35), text="Equipos", bg="#3562A6", fg="#FFFFFF")
+    titleLabel.place(x=75, y=20)
+
+    estMCI = Button(nav, image=logoMCI_est, state="normal", command=lambda :[container.destroy(), stadisticsMenu("Manchester City")])
+    estMCI.place(x=50, y=100)
+
+    estRMA = Button(nav, image=logoRMA_est, width=200, state="normal", command=lambda :[container.destroy(), stadisticsMenu("Real Madrid")])
+    estRMA.place(x=50, y=400)
+
+    estBAR = Button(nav, image=logoBAR_est, state="normal", command=lambda :[container.destroy(), stadisticsMenu("Barcelona FC")])
+    estBAR.place(x=50, y=700)
+
+    if team == "Manchester City":
+        estMCI["state"] = "disabled"
+    elif team == "Real Madrid":
+        estRMA["state"] = "disabled"
+    elif team == "Barcelona FC":
+        estBAR["state"] = "disabled"
+
+    ##################################################################################
+
+    teamName = StringVar()
+    teamName.set(f"Estadísiticas generales del {team}")
+
+    manageGeneralStadistics(team)
+
+    teamTittle = Label(container, font=("Champions", 35), textvariable=teamName, bg="#14223E", fg="#FFFFFF", width=36, anchor="n")
+    teamTittle.place(x=320, y=20)
+
+    totalGoalsLabel = Label(container, font=("ITC Novarese Std Medium", 30), textvariable=totalGoals, bg="#14223E", fg="#6594C0")
+    totalGoalsLabel.place(x=320, y=130)
+
+    totalSavesLabel = Label(container, font=("ITC Novarese Std Medium", 30), textvariable=totalSaves, bg="#14223E", fg="#6594C0")
+    totalSavesLabel.place(x=320, y=180)
+
+    totalFailedLabel = Label(container, font=("ITC Novarese Std Medium", 30), textvariable=totalFailed, bg="#14223E", fg="#6594C0")
+    totalFailedLabel.place(x=320, y=230)
+
+    topStrikerLabel = Label(container, font=("ITC Novarese Std Medium", 30), textvariable=topStriker, bg="#14223E", fg="#6594C0")
+    topStrikerLabel.place(x=320, y=280)
+
+    individualTittle = Label(container, font=("Champions", 35), text="Estadísticas Individuales", bg="#14223E", fg="#FFFFFF", width=36, anchor="n")
+    individualTittle.place(x=320, y=400)
+
+
+
+def manageGeneralStadistics(team):
+    global totalGoals, totalSaves, totalFailed, topStriker
+    print(team)
+    with open("teams-data-base.json", encoding="utf-8") as f:
+        datos = json.load(f)
+
+    strikerList = []
+    keeperList = []
+
+    for Teams in datos["Teams"]:
+        if Teams["Team"] == team:
+            for Player in Teams["Strikers"]:
+                strikerList.append([Player["Name"], Player["Goals"], Player["Failed"]])
+            for Player in Teams["Keepers"]:
+                keeperList.append([Player["Name"], Player["Saves"]])
+
+    strikerListSorted = natsort.natsorted(strikerList, key=lambda x:x[1], reverse=True)
+    keeperListSorted = natsort.natsorted(keeperList, key=lambda x:x[1], reverse=True)
+
+    topStriker.set(f" • Goleador: {strikerListSorted[0][0]}")
+
+    totalG = 0
+    totalF = 0
+    totalS = 0
+
+    for i in range(len(strikerListSorted)):
+        totalG += int(strikerListSorted[i][1])
+        totalF += int(strikerListSorted[i][2])
+    for i in range(len(keeperListSorted)):
+        totalS += int(keeperListSorted[i][1])
+
+    totalGoals.set(f" • Goles totales: {totalG}")
+    totalFailed.set(f" • Goles fallados: {totalF}")
+    totalSaves.set(f" • Atajadas totales: {totalS}")
+
+
 
 
 def testMenu(window_width, window_height):
@@ -48,7 +148,6 @@ def testMenu(window_width, window_height):
 
     sendBtn = Button(container, text='?', font=("Champions", 35), command=lambda:[sendToPico("testCircuit"), threadPicoRead.start()])
     sendBtn.place(x=500, y=450)
-
 
 # Menú configuración inicial
 def initConfig(window_width, window_height):
@@ -74,7 +173,6 @@ def initConfig(window_width, window_height):
 
     BARButton = Button(container, image=logoBAR, background="#14223E", width=250, state="normal", command=lambda:[choosenTeams(BARButton, "Barcelona FC", container)])
     BARButton.place(x=800, y=400)
-
 
 # Guarda qué equipos escogió el usuario.
 def choosenTeams(button, teamName, container):
@@ -124,6 +222,7 @@ def decidePickAPlayer(mode):
         else:
             teamDraw()
 
+
 def teamDraw():
     global coinFlipFrames, threadCoinFlipAnim
     container = Canvas(root, width=f"{window_width}", height=f"{window_height}", background="#14223E", highlightbackground="#14223E")
@@ -158,6 +257,7 @@ def teamDraw():
     startButton = Button(container, text="INICIAR", font=("Champions", 40), command=lambda :[threadCoinFlipAnim.start(), startButton.destroy()])
     startButton.place(x=500, y=700)
 
+
 def iconAux(heads, tails, mode):
     if mode == "heads":
         if heads == "Manchester City":
@@ -179,6 +279,7 @@ def iconAux(heads, tails, mode):
         if tails == "Barcelona FC":
             tailsImg = logoBAR
             return tailsImg
+
 
 def coinFlipAnim(coin, container, heads, tails):
     global coinFlipFrames, wGonnaWin
@@ -224,7 +325,6 @@ def coinFlipAnim(coin, container, heads, tails):
 
     container.destroy()
     startGame()
-
 
 
 def pickAPlayerMCI():
@@ -595,7 +695,9 @@ def pickAKeeperAux(player_num, strikerCanvas, mode, player, strikerL, keepersLis
 
 
 def startGame():
-    pass
+    container = Canvas(root, width=f"{window_width}", height=f"{window_height}", background="#14223E",
+                       highlightbackground="#14223E")
+    container.pack()
 
 
 def sendToPico(message):
@@ -634,12 +736,15 @@ Logo = ImageTk.PhotoImage(openLogo.resize((1000, 1000)))
 
 logoMCIOp = Image.open("assets/LogoMCI.png")
 logoMCI = ImageTk.PhotoImage(logoMCIOp.resize((250, 250)))
+logoMCI_est = ImageTk.PhotoImage(logoMCIOp.resize((200, 200)))
 
 logoRMAOp = Image.open("assets/LogoRMA.png")
 logoRMA = ImageTk.PhotoImage(logoRMAOp.resize((200, 250)))
+logoRMA_est = ImageTk.PhotoImage(logoRMAOp.resize((150, 200)))
 
 logoBAROp = Image.open("assets/logoBAR.png")
 logoBAR = ImageTk.PhotoImage(logoBAROp.resize((250, 250)))
+logoBAR_est = ImageTk.PhotoImage(logoBAROp.resize((200, 200)))
 
 
 # Variables para el funcionamiento del juego
@@ -653,11 +758,15 @@ local = None
 localStriker = None
 localKeeper = None
 localBench = []
+localScore = StringVar()
+localScore.set("0")
 
 visiting = None
 visitingStriker = None
 visitingKeeper = None
 visitingBench = []
+visitingScore = StringVar()
+visitingScore.set("0")
 
 visitingPicking = True
 
@@ -671,6 +780,11 @@ coinFlipSprites = natsort.natsorted(os.listdir('coinflip'))
 for i in coinFlipSprites:
     id = Image.open(f"coinflip/{i}")
     coinFlipFrames.append(ImageTk.PhotoImage(id))
+
+totalGoals = StringVar()
+totalSaves = StringVar()
+totalFailed = StringVar()
+topStriker = StringVar()
 
 # Conexion con la Raspberry Pi Pico
 
