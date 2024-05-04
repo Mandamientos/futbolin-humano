@@ -1,10 +1,8 @@
 import threading
 import time
 from tkinter import *
-from tkinter import ttk
 from PIL import Image, ImageTk
 import random
-import serial
 import socket
 import os
 import natsort
@@ -34,7 +32,7 @@ def mainMenu(window_width, window_height, Logo):
     verLabel.place(x=20, y=950)
 
 def stadisticsMenu(team):
-    global logoMCI_est, logoBAR_est, logoRMA_est, totalGoals, totalSaves, totalFailed, topStriker
+    global logoMCI_est, logoBAR_est, logoRMA_est, totalGoals, totalSaves, totalFailed, topStriker, strikerList, keeperList
     container = Canvas(root, width=f"{window_width}", height=f"{window_height}", background="#14223E", highlightbackground="#14223E")
     container.pack()
 
@@ -90,10 +88,13 @@ def stadisticsMenu(team):
     individualTittle = Label(container, font=("Champions", 35), text="Estadísticas Individuales", bg="#14223E", fg="#FFFFFF", width=36, anchor="n")
     individualTittle.place(x=320, y=400)
 
+    print(keeperList)
+    print(strikerList)
+
 
 
 def manageGeneralStadistics(team):
-    global totalGoals, totalSaves, totalFailed, topStriker
+    global totalGoals, totalSaves, totalFailed, topStriker, strikerList, keeperList
     print(team)
     with open("teams-data-base.json", encoding="utf-8") as f:
         datos = json.load(f)
@@ -126,8 +127,6 @@ def manageGeneralStadistics(team):
     totalGoals.set(f" • Goles totales: {totalG}")
     totalFailed.set(f" • Goles fallados: {totalF}")
     totalSaves.set(f" • Atajadas totales: {totalS}")
-
-
 
 
 def testMenu(window_width, window_height):
@@ -785,6 +784,8 @@ totalGoals = StringVar()
 totalSaves = StringVar()
 totalFailed = StringVar()
 topStriker = StringVar()
+strikerList = []
+keeperList = []
 
 # Conexion con la Raspberry Pi Pico
 
