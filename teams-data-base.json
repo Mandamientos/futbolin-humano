@@ -17,7 +17,7 @@
       "Team": "Real Madrid",
       "Strikers": [
         {"Name": "Jude Bellingham", "Goals": "0", "Failed": "0"},
-        {"Name": "Luka Modrić", "Goals": "0", "Failed": "0"},
+        {"Name": "Luka Modrić", "Goals": "20", "Failed": "0"},
         {"Name": "Rodrygo Silva", "Goals": "0", "Failed": "0"},
         {"Name": "Vinicius Jr", "Goals": "0", "Failed": "0"}
       ],

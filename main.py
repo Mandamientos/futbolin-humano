@@ -128,9 +128,8 @@ def manageGeneralStadistics(team):
     totalSaves.set(f" • Atajadas totales: {totalS}")
 
 
-
-
 def testMenu(window_width, window_height):
+    global threadPicoRead
 
     root.title("Prueba de modulos")
 
@@ -146,7 +145,7 @@ def testMenu(window_width, window_height):
     sendBtn = Button(container, text='ENVIAR', font=("Champions", 35), command=lambda:[sendToPico(stimulus.get())])
     sendBtn.place(x=500, y=350)
 
-    sendBtn = Button(container, text='?', font=("Champions", 35), command=lambda:[sendToPico("testCircuit"), threadPicoRead.start()])
+    sendBtn = Button(container, text='?', font=("Champions", 35), command=lambda:[sendToPico("testCircuit")])
     sendBtn.place(x=500, y=450)
 
 # Menú configuración inicial
@@ -702,22 +701,24 @@ def startGame():
 
 def sendToPico(message):
     #btn["state"] = "disabled"
-    s = socket.socket()
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((ip_raspberry, 8080))
+    #s.listen(1)
+    #conexion, direccion = s.accept()
+    s.sendall(message.encode())
+    s.close()
+    print("Mensaje enviado.")
+    readFromPico()
+
+def readFromPico():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((ip_server, server_port))
     s.listen(1)
     conexion, direccion = s.accept()
-    conexion.send(message.encode())
-    print("Mensaje enviado.")
-
-def readFromPico():
-    while enabled:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind((ip_server, server_port))
-        s.listen(1)
-        conexion, direccion = s.accept()
+    while True:
         respuesta = conexion.recv(1024).decode()
         print(respuesta)
-        time.sleep(1)
+    s.close()
 
 
 root = Tk()
@@ -788,13 +789,14 @@ topStriker = StringVar()
 
 # Conexion con la Raspberry Pi Pico
 
-ip_server = "192.168.18.234"
+ip_server = "0.0.0.0"
+ip_raspberry = "192.168.18.154"
 server_port = 50000
 enabled = True
 
 threadCoinFlipAnim = threading.Thread(target=coinFlipAnim)
 
-#threadPicoRead = threading.Thread(target=readFromPico)
+threadPicoRead = threading.Thread(target=readFromPico)
 #threadPicoRead.start()
 
 #threadPicoSend = threading.Thread(target=sendPico)
