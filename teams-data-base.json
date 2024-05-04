@@ -3,14 +3,14 @@
     {
       "Team": "Manchester City",
       "Strikers": [
-        {"Name": "Erling Haaland", "Goals": "51", "Failed": "0"},
+        {"Name": "Erling Haaland", "Goals": "51", "Failed": "1"},
         {"Name": "Julián Álvarez", "Goals": "5", "Failed": "0"},
         {"Name": "K. De Bruyne", "Goals": "92", "Failed": "0"},
-        {"Name": "Phil Foden", "Goals": "30", "Failed": "0"}
+        {"Name": "Phil Foden", "Goals": "30", "Failed": "3"}
       ],
       "Keepers": [
-        {"Name": "Ederson Morae", "Saves": "12"},
-        {"Name": "Scott Carson", "Saves": "1"}
+        {"Name": "Ederson Morae", "Saves": "12", "Failed": "0"},
+        {"Name": "Scott Carson", "Saves": "1", "Failed": "0"}
       ]
     },
     {

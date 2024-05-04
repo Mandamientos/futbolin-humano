@@ -22,7 +22,7 @@ def mainMenu(window_width, window_height, Logo):
     aboutButton = Button(container, font=("Champions", 35), text="ACERCA")
     aboutButton.place(x=510, y=750)
 
-    stadisticsBtn = Button(container, font=("Champions", 35), text="ESTADÍSTICAS", command=lambda:[container.destroy(), stadisticsMenu("Manchester City")])
+    stadisticsBtn = Button(container, font=("Champions", 35), text="ESTADÍSTICAS", command=lambda:[container.destroy(), stadisticsMenu("Manchester City", "MCI")])
     stadisticsBtn.place(x=450, y=625)
 
     testModulesBtn = Button(container, font=("Champions", 35), text="PROBAR", command=lambda:[container.destroy(), testMenu(window_width, window_height)])
@@ -31,7 +31,7 @@ def mainMenu(window_width, window_height, Logo):
     verLabel = Label(container, font=("Champions", 25), text="VERSIÓN 1.0", bg="#14223E", fg="#FFFFFF")
     verLabel.place(x=20, y=950)
 
-def stadisticsMenu(team):
+def stadisticsMenu(team, sig):
     global logoMCI_est, logoBAR_est, logoRMA_est, totalGoals, totalSaves, totalFailed, topStriker, strikerList, keeperList
     container = Canvas(root, width=f"{window_width}", height=f"{window_height}", background="#14223E", highlightbackground="#14223E")
     container.pack()
@@ -47,13 +47,13 @@ def stadisticsMenu(team):
     titleLabel = Label(nav, font=("Champions", 35), text="Equipos", bg="#3562A6", fg="#FFFFFF")
     titleLabel.place(x=75, y=20)
 
-    estMCI = Button(nav, image=logoMCI_est, state="normal", command=lambda :[container.destroy(), stadisticsMenu("Manchester City")])
+    estMCI = Button(nav, image=logoMCI_est, state="normal", command=lambda :[container.destroy(), stadisticsMenu("Manchester City", "MCI")])
     estMCI.place(x=50, y=100)
 
-    estRMA = Button(nav, image=logoRMA_est, width=200, state="normal", command=lambda :[container.destroy(), stadisticsMenu("Real Madrid")])
+    estRMA = Button(nav, image=logoRMA_est, width=200, state="normal", command=lambda :[container.destroy(), stadisticsMenu("Real Madrid","RMA")])
     estRMA.place(x=50, y=400)
 
-    estBAR = Button(nav, image=logoBAR_est, state="normal", command=lambda :[container.destroy(), stadisticsMenu("Barcelona FC")])
+    estBAR = Button(nav, image=logoBAR_est, state="normal", command=lambda :[container.destroy(), stadisticsMenu("Barcelona FC","BAR")])
     estBAR.place(x=50, y=700)
 
     if team == "Manchester City":
@@ -88,9 +88,65 @@ def stadisticsMenu(team):
     individualTittle = Label(container, font=("Champions", 35), text="Estadísticas Individuales", bg="#14223E", fg="#FFFFFF", width=36, anchor="n")
     individualTittle.place(x=320, y=400)
 
-    print(keeperList)
-    print(strikerList)
+    listajugadores = os.listdir(f"{team}/jugadores-{sig}")
+    listaporteros = os.listdir(f"{team}/porteros-{sig}")
+    jugadoresImgs = []
+    porterosImgs = []
 
+    for i in listajugadores:
+        id = Image.open(f"{team}/jugadores-{sig}/{i}")
+        jugadoresImgs.append(ImageTk.PhotoImage(id.resize((250,250))))
+    for i in listaporteros:
+        id = Image.open(f"{team}/porteros-{sig}/{i}")
+        porterosImgs.append(ImageTk.PhotoImage(id.resize((250,250))))
+
+    player1btn = Button(container, image=jugadoresImgs[0], command=lambda:[manageIndividualStats(team, strikerList[0][0], jugadoresImgs[0], 0, "striker"), container.destroy()])
+    player1btn.place(x=340, y=500)
+
+    player2btn = Button(container, image=jugadoresImgs[1], command=lambda:[manageIndividualStats(team, strikerList[1][0], jugadoresImgs[1], 1, "striker"), container.destroy()])
+    player2btn.place(x=620, y=500)
+
+    player3btn = Button(container, image=jugadoresImgs[2], command=lambda:[manageIndividualStats(team, strikerList[2][0], jugadoresImgs[2], 2, "striker"), container.destroy()])
+    player3btn.place(x=900, y=500)
+
+    nextbtn = Button(container, font=("Champions", 30), text=">>>>", command=lambda: [loadImgs(jugadoresImgs, porterosImgs, container, "nxt", team), player1btn.destroy(), player2btn.destroy(), player3btn.destroy(), nextbtn.destroy()])
+    nextbtn.place(x=690,y=800)
+
+    root.mainloop()
+
+def loadImgs(jugadoresImgs, porterosImgs, container, mode, team):
+    if mode == "nxt":
+
+        nextbtn = Button(container, font=("Champions", 30), text="<<<<",
+                         command=lambda: [loadImgs(jugadoresImgs, porterosImgs, container, "prev", team),
+                                          player4btn.destroy(), player5btn.destroy(), player6btn.destroy(), nextbtn.destroy()])
+        nextbtn.place(x=690, y=800)
+
+        player4btn = Button(container, image=jugadoresImgs[3], command=lambda:[manageIndividualStats(team, strikerList[3][0], jugadoresImgs[3], 3, "striker"), container.destroy()])
+        player4btn.place(x=340, y=500)
+
+        player5btn = Button(container, image=porterosImgs[0], command=lambda:[manageIndividualStats(team, keeperList[0][0], porterosImgs[0], 0, "keeper"), container.destroy()])
+        player5btn.place(x=620, y=500)
+
+        player6btn = Button(container, image=porterosImgs[1], command=lambda:[manageIndividualStats(team, keeperList[1][0], porterosImgs[1], 1, "keeper"), container.destroy()])
+        player6btn.place(x=900, y=500)
+
+    if mode == "prev":
+        nextbtn = Button(container, font=("Champions", 30), text=">>>>",
+                         command=lambda: [loadImgs(jugadoresImgs, porterosImgs, container, "nxt", team),
+                                          player1btn.destroy(), player2btn.destroy(), player3btn.destroy(),
+                                          nextbtn.destroy()])
+        nextbtn.place(x=690, y=800)
+
+        player1btn = Button(container, image=jugadoresImgs[0], command=lambda:[manageIndividualStats(team, strikerList[0][0], jugadoresImgs[0], 0, "striker"), container.destroy()])
+        player1btn.place(x=340, y=500)
+
+        player2btn = Button(container, image=jugadoresImgs[1], command=lambda:[manageIndividualStats(team, strikerList[1][0], jugadoresImgs[1], 1, "striker"), container.destroy()])
+        player2btn.place(x=620, y=500)
+
+        player3btn = Button(container, image=jugadoresImgs[2], command=lambda: [
+            manageIndividualStats(team, strikerList[2][0], jugadoresImgs[2], 2, "striker"), container.destroy()])
+        player3btn.place(x=900, y=500)
 
 
 def manageGeneralStadistics(team):
@@ -107,7 +163,7 @@ def manageGeneralStadistics(team):
             for Player in Teams["Strikers"]:
                 strikerList.append([Player["Name"], Player["Goals"], Player["Failed"]])
             for Player in Teams["Keepers"]:
-                keeperList.append([Player["Name"], Player["Saves"]])
+                keeperList.append([Player["Name"], Player["Saves"], Player["Failed"]])
 
     strikerListSorted = natsort.natsorted(strikerList, key=lambda x:x[1], reverse=True)
     keeperListSorted = natsort.natsorted(keeperList, key=lambda x:x[1], reverse=True)
@@ -128,6 +184,71 @@ def manageGeneralStadistics(team):
     totalFailed.set(f" • Goles fallados: {totalF}")
     totalSaves.set(f" • Atajadas totales: {totalS}")
 
+
+def manageIndividualStats(team, player, img, i, mode):
+    global logoMCI_est, logoBAR_est, logoRMA_est, strikerList, keeperList
+
+    def back():
+        if team == "Manchester City":
+            stadisticsMenu("Manchester City", "MCI")
+        elif team == "Real Madrid":
+            stadisticsMenu("Real Madrid", "RMA")
+        elif team == "Barcelona FC":
+            stadisticsMenu("Barcelona FC", "BAR")
+
+    container = Canvas(root, width=f"{window_width}", height=f"{window_height}", background="#14223E", highlightbackground="#14223E")
+    container.pack()
+
+    backBtn = Button(root, font=("Champions", 35), text="ATRÁS", bg="#3562A6", fg="#FFFFFF", command=lambda:[container.destroy(), back()])
+    backBtn.place(x=1000, y=900)
+
+    root.title("Estadísticas")
+
+    nav = Canvas(container, height=1200, width=300, background="#3562A6", highlightbackground="#3562A6")
+    nav.place(x=0, y=0)
+
+    titleLabel = Label(nav, font=("Champions", 35), text="Equipos", bg="#3562A6", fg="#FFFFFF")
+    titleLabel.place(x=75, y=20)
+
+    estMCI = Button(nav, image=logoMCI_est, state="normal", command=lambda :[container.destroy(), stadisticsMenu("Manchester City", "MCI")])
+    estMCI.place(x=50, y=100)
+
+    estRMA = Button(nav, image=logoRMA_est, width=200, state="normal", command=lambda :[container.destroy(), stadisticsMenu("Real Madrid","RMA")])
+    estRMA.place(x=50, y=400)
+
+    estBAR = Button(nav, image=logoBAR_est, state="normal", command=lambda :[container.destroy(), stadisticsMenu("Barcelona FC","BAR")])
+    estBAR.place(x=50, y=700)
+
+    if team == "Manchester City":
+        estMCI["state"] = "disabled"
+    elif team == "Real Madrid":
+        estRMA["state"] = "disabled"
+    elif team == "Barcelona FC":
+        estBAR["state"] = "disabled"
+
+    ###############################################################################################
+
+    if mode == "striker":
+
+        strikerTitle = Label(container, font=("Champions", 35), text=f"Estadísiticas de {player}", bg="#14223E", fg="#FFFFFF", width=36, anchor="n")
+        strikerTitle.place(x=320, y=20)
+
+        totalGoalsLabel = Label(container, font=("ITC Novarese Std Medium", 30), text=f" • Goles totales: {strikerList[i][1]}", bg="#14223E", fg="#6594C0")
+        totalGoalsLabel.place(x=320, y=130)
+
+        totalFailedLabel = Label(container, font=("ITC Novarese Std Medium", 30), text=f" • Tiros fallados: {strikerList[i][2]}", bg="#14223E", fg="#6594C0")
+        totalFailedLabel.place(x=320, y=230)
+
+    elif mode == "keeper":
+
+        keeperTitle = Label(container, font=("Champions", 35), text=f"Estadísiticas de {player}", bg="#14223E", fg="#FFFFFF", width=36, anchor="n")
+        keeperTitle.place(x=320, y=20)
+
+        totalSavesLabel = Label(container, font=("ITC Novarese Std Medium", 30), text=f" • Atajadas: {keeperList[i][1]}", bg="#14223E", fg="#6594C0")
+        totalSavesLabel.place(x=320, y=130)
+
+        totalFailedLabel = Label(container, font=("ITC Novarese Std Medium", 30), text=f" • Atajadas fallidas: {keeperList[i][2]}", bg="#14223E", fg="#6594C0")
+        totalFailedLabel.place(x=320, y=230)
 
 def testMenu(window_width, window_height):
     global threadPicoRead
