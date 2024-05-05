@@ -267,7 +267,7 @@ def testMenu(window_width, window_height):
     sendBtn = Button(container, text='ENVIAR', font=("Champions", 35), command=lambda:[sendToPico(stimulus.get())])
     sendBtn.place(x=500, y=350)
 
-    sendBtn = Button(container, text='?', font=("Champions", 35), command=lambda:[sendToPico("testCircuit")])
+    sendBtn = Button(container, text='?', font=("Champions", 35), command=lambda:[threadPicoRead.start()])
     sendBtn.place(x=500, y=450)
 
 # Menú configuración inicial
@@ -830,17 +830,29 @@ def sendToPico(message):
     s.sendall(message.encode())
     s.close()
     print("Mensaje enviado.")
-    readFromPico()
+    #readFromPico()
 
 def readFromPico():
+    while True:
+        try:
+            readFromPicoAux()
+        except Exception as e:
+            print(e)
+
+def readFromPicoAux():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((ip_server, server_port))
     s.listen(1)
     conexion, direccion = s.accept()
+    print("Conectado con:", direccion)
+
     while True:
         respuesta = conexion.recv(1024).decode()
+        if not respuesta:
+            break
         print(respuesta)
-    s.close()
+        time.sleep(0.5)
+        conexion.close()
 
 
 root = Tk()
@@ -914,7 +926,7 @@ keeperList = []
 # Conexion con la Raspberry Pi Pico
 
 ip_server = "0.0.0.0"
-ip_raspberry = "192.168.18.154"
+ip_raspberry = "192.168.0.6"
 server_port = 50000
 enabled = True
 
