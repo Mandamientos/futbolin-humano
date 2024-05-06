@@ -3,13 +3,13 @@ import time
 import network
 import _thread
 
-ssid = "Guillermo"
-password = "123456789"
+#ssid = "Guillermo"
+#password = "123456789"
 
 Running = True
 
-#ssid = "Router P"
-#password = "loco12345"
+ssid = "Pueblatec"
+password = "Pueblatec1234"
 
 wifi = network.WLAN(network.STA_IF)
 wifi.active(True)
@@ -21,17 +21,16 @@ while not wifi.isconnected():
     time.sleep(1)
 print("Conexion establecida: ", wifi.ifconfig())
 
-P1 = machine.Pin(15, machine.Pin.IN)
-P2 = machine.Pin(13, machine.Pin.IN)
-P3 = machine.Pin(10, machine.Pin.IN)
-P4 = machine.Pin(21, machine.Pin.IN)
-P5 = machine.Pin(18, machine.Pin.IN)
-P6 = machine.Pin(16, machine.Pin.IN)
-
+P1 = machine.Pin(0, machine.Pin.IN)
+P2 = machine.Pin(1, machine.Pin.IN)
+P3 = machine.Pin(2, machine.Pin.IN)
+P4 = machine.Pin(3, machine.Pin.IN)
+P5 = machine.Pin(4, machine.Pin.IN)
+P6 = machine.Pin(5, machine.Pin.IN)
 
 # Configurar la dirección IP y el puerto del servidor
 
-SERVER_IP = "192.168.0.5"
+SERVER_IP = "192.168.18.234"
 
 SERVER_PORT = 50000
 
@@ -48,7 +47,7 @@ def escucharPython():
             conexion, direccion = s.accept()
             respuesta = conexion.recv(1024).decode()
             print(respuesta)
-            if respuesta == "testCircuit":
+            if respuesta == "read":
             #Conexion.sendall("Iniciado pa")
             #print("Mensaje enviado")
                 _thread.start_new_thread(cuenta3, ())
@@ -63,14 +62,27 @@ def escucharPython():
 def leerPaletas(conexion, direccion):
     while Running:
         try:
+            print(P1.value())
             l = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             l.connect((SERVER_IP, SERVER_PORT))
-            l.sendall("Hola Python".encode())
+            #l.sendall("Hola Python".encode())
+            if P1.value() == 1:
+                l.sendall("P1".encode())
+            if P2.value() == 1:
+                l.sendall("P2".encode())
+            if P3.value() == 1:
+                l.sendall("P3".encode())
+            if P4.value() == 1:
+                l.sendall("P4".encode())
+            if P5.value() == 1:
+                l.sendall("P5".encode())
+            if P6.value() == 1:
+                l.sendall("P6".encode())
             l.close()
-            time.sleep(1)
+            time.sleep(0.2)
         except Exception as e:
             print("Error en conexión:", e)
-            time.sleep(1)
+            time.sleep(0.2)
     escucharPython()
     #while True:
         #try:
@@ -103,6 +115,7 @@ def cuenta3():
     time.sleep(3)
     Running = False
     time.sleep(1)
+    Running = True
 
 
 escucharPython()

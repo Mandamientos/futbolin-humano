@@ -3,21 +3,21 @@
     {
       "Team": "Manchester City",
       "Strikers": [
-        {"Name": "Erling Haaland", "Goals": "51", "Failed": "1"},
-        {"Name": "Julián Álvarez", "Goals": "5", "Failed": "0"},
-        {"Name": "K. De Bruyne", "Goals": "92", "Failed": "0"},
-        {"Name": "Phil Foden", "Goals": "30", "Failed": "3"}
+        {"Name": "Erling Haaland", "Goals": "0", "Failed": "0"},
+        {"Name": "Julián Álvarez", "Goals": "0", "Failed": "0"},
+        {"Name": "K. De Bruyne", "Goals": "0", "Failed": "0"},
+        {"Name": "Phil Foden", "Goals": "0", "Failed": "0"}
       ],
       "Keepers": [
-        {"Name": "Ederson Morae", "Saves": "12", "Failed": "0"},
-        {"Name": "Scott Carson", "Saves": "1", "Failed": "0"}
+        {"Name": "Ederson Morae", "Saves": "0", "Failed": "0"},
+        {"Name": "Scott Carson", "Saves": "0", "Failed": "0"}
       ]
     },
     {
       "Team": "Real Madrid",
       "Strikers": [
         {"Name": "Jude Bellingham", "Goals": "0", "Failed": "0"},
-        {"Name": "Luka Modrić", "Goals": "20", "Failed": "0"},
+        {"Name": "Luka Modrić", "Goals": "0", "Failed": "0"},
         {"Name": "Rodrygo Silva", "Goals": "0", "Failed": "0"},
         {"Name": "Vinicius Jr", "Goals": "0", "Failed": "0"}
       ],

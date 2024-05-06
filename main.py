@@ -1,8 +1,10 @@
 import threading
 import time
 from tkinter import *
+from tkinter import ttk
 from PIL import Image, ImageTk
 import random
+import pygame
 import socket
 import os
 import natsort
@@ -445,7 +447,7 @@ def coinFlipAnim(coin, container, heads, tails):
         time.sleep(1)
 
     container.destroy()
-    startGame()
+    startGame("Local")
 
 
 def pickAPlayerMCI():
@@ -815,10 +817,227 @@ def pickAKeeperAux(player_num, strikerCanvas, mode, player, strikerL, keepersLis
             visitingKeeper = f"{keepersList[playerNum]}"
 
 
-def startGame():
+def startGame(mode):
+    global scrRedon, scrLcl, localStriker, localBench, localPlayed, visitingPlayed, visitingStriker, visitingBench, round, datos
     container = Canvas(root, width=f"{window_width}", height=f"{window_height}", background="#14223E",
                        highlightbackground="#14223E")
     container.pack()
+
+    localL, visitingL = getLogo()
+
+    container.create_image(430, 200, image=scrLcl)
+
+    container.create_image(200, 200, image=scrRedon)
+
+    container.create_image(200, 200, image=localL)
+
+    container.create_image(770, 200, image=scrLcl)
+
+    container.create_image(1000, 200, image=scrRedon)
+
+    container.create_image(1000, 200, image=visitingL)
+
+    lblScore = Label(container, textvariable=localScore, font=("Champions", 70), background="#2150ff", foreground="#FFFFFF").place(x=415,y=150)
+
+    lbvScore = Label(container, textvariable=visitingScore, font=("Champions", 70), background="#2150ff", foreground="#FFFFFF").place(x=745,y=150)
+
+    roundL = Label(container, text=f"Ronda {round}", font=("Champions", 45), background="#14223E", foreground="#FFFFFF").place(x=500,y=350)
+
+    if mode == "Local":
+        timeto = Label(container, text=f"Es el turno del {local}.", font=("Champions", 40), width=40, background="#14223E", anchor="n",
+                         foreground="#FFFFFF")
+        timeto.place(x=60, y=600)
+
+        pygame.mixer.Sound.play(cheersSF)
+        time.sleep(2)
+
+        timeto["text"] = f"{localStriker} se prepara para tirar"
+
+        pygame.mixer.Sound.play(initPitido)
+
+        time.sleep(4)
+
+        sendToPico("read")
+
+        pygame.mixer.Sound.fadeout(cheersSF, 2)
+
+        pygame.mixer.Sound.play(initPitido)
+
+        timeto["text"] = f"¡TIRA AL ARCO!"
+
+        simulateStrike = [random.choice(["P1","P2","P3","P4","P5","P6"])]
+
+        ghostKeeper()
+
+        countdown = StringVar()
+
+        countdown.set("3s")
+
+        timeLeft = Label(container, textvariable=countdown, font=("Champions", 40), fg="#3562A6", bg="#14223E")
+        timeLeft.place(x=580, y=700)
+
+        for i in range(3, -1, -1):
+            countdown.set(f"{i}s")
+            time.sleep(1)
+
+        datos_lista = list(datos)
+        print(datos_lista)
+
+        if handleGoal(datos_lista):
+            localScore.set(f"{int(localScore.get())+1}")
+            pygame.mixer.Sound.play(goalSF)
+            timeto["text"] = "G"
+            for i in range(0, 15):
+                timeto["text"] += "O"
+                time.sleep(0.5)
+                if i == 14:
+                    timeto["text"] += "L"
+
+        if not handleGoal(datos_lista):
+            timeto["text"] = f"¡Tapó {visitingKeeper}!"
+            pygame.mixer.Sound.play(abucheosSF)
+            time.sleep(3)
+            pygame.mixer.Sound.fadeout(abucheosSF, 2)
+
+        localBench.append(localStriker)
+        localStriker = localBench[0]
+        del localBench [0]
+
+        print(datos)
+
+        localPlayed = True
+        time.sleep(1)
+        container.destroy()
+        roundHandler()
+
+    if mode == "Visiting":
+        timeto = Label(container, text=f"Es el turno del {visiting}.", font=("Champions", 40), width=40, background="#14223E", anchor="n",
+                         foreground="#FFFFFF")
+        timeto.place(x=60, y=600)
+
+        pygame.mixer.Sound.play(cheersSF)
+        time.sleep(2)
+
+        timeto["text"] = f"{visitingStriker} se prepara para tirar"
+
+        pygame.mixer.Sound.play(initPitido)
+
+        time.sleep(4)
+
+        sendToPico("read")
+
+        pygame.mixer.Sound.fadeout(cheersSF, 2)
+
+        pygame.mixer.Sound.play(initPitido)
+
+        timeto["text"] = f"¡TIRA AL ARCO!"
+
+        simulateStrike = [random.choice(["P1","P2","P3","P4","P5","P6"])]
+
+        ghostKeeper()
+
+        countdown = StringVar()
+
+        countdown.set("3s")
+
+        timeLeft = Label(container, textvariable=countdown, font=("Champions", 40), fg="#3562A6", bg="#14223E")
+        timeLeft.place(x=580, y=700)
+
+        for i in range(3, -1, -1):
+            countdown.set(f"{i}s")
+            time.sleep(1)
+
+        datos_lista = list(datos)
+        print(datos_lista)
+
+        if handleGoal(datos_lista):
+            visitingScore.set(f"{int(visitingScore.get())+1}")
+            pygame.mixer.Sound.play(goalSF)
+            timeto["text"] = "G"
+            for i in range(0, 15):
+                timeto["text"] += "O"
+                time.sleep(0.5)
+                if i == 14:
+                    timeto["text"] += "L"
+
+        if not handleGoal(datos_lista):
+            timeto["text"] = f"¡TAPÓ {localKeeper}!"
+            pygame.mixer.Sound.play(abucheosSF)
+            time.sleep(3)
+            pygame.mixer.Sound.fadeout(abucheosSF, 2)
+
+        visitingBench.append(visitingStriker)
+        visitingStriker = visitingBench[0]
+        del visitingBench[0]
+
+        print(datos)
+
+        visitingPlayed = True
+        time.sleep(1)
+        container.destroy()
+        roundHandler()
+
+def getLogo():
+    global local, visiting
+
+    localL = None
+    visitingL = None
+
+    if local == "Manchester City":
+        localL = logoMCI_est
+    if local == "Real Madrid":
+        localL = logoRMA_est
+    if local == "Barcelona FC":
+        localL = logoBAR_est
+    if visiting == "Manchester City":
+        visitingL = logoMCI_est
+    if visiting == "Real Madrid":
+        visitingL = logoRMA_est
+    if visiting == "Barcelona FC":
+        visitingL = logoBAR_est
+    return localL, visitingL
+
+
+def ghostKeeper():
+    global ghostKeeperPos
+    AN1 = [["P1", "P2"], ["P3","P4"], ["P5","P6"]]
+    AN2 = [["P1","P2","P3"], ["P4", "P5", "P6"]]
+
+    method = random.choice(["AN1", "AN2"])
+
+    if method == "AN1":
+        ghostKeeperPos = random.choice(AN1)
+
+    else:
+        ghostKeeperPos = random.choice(AN2)
+
+    print(ghostKeeperPos)
+
+
+def handleGoal(touchedContacts):
+    print(touchedContacts)
+    global ghostKeeperPos
+    if touchedContacts == []:
+        return "No hay contacto"
+    for i in range(len(ghostKeeperPos)):
+        for j in range(len(touchedContacts)):
+            print(ghostKeeperPos[i], touchedContacts[j])
+            if ghostKeeperPos[i] == touchedContacts[j]:
+                #print("Hola")
+                return False
+    return True
+
+
+def roundHandler():
+    global localPlayed, visitingPlayed, round, datos
+    datos.clear()
+    if localPlayed and not visitingPlayed:
+        startGame("Visiting")
+    elif localPlayed and visitingPlayed:
+        round = round + 1
+        localPlayed = False
+        visitingPlayed = False
+        startGame("Local")
 
 
 def sendToPico(message):
@@ -850,8 +1069,9 @@ def readFromPicoAux():
         respuesta = conexion.recv(1024).decode()
         if not respuesta:
             break
-        print(respuesta)
-        time.sleep(0.5)
+        datos.add(respuesta)
+        print(datos)
+        time.sleep(0.2)
         conexion.close()
 
 
@@ -863,6 +1083,13 @@ window_height = 1000
 root.geometry(f"{window_width}x{window_height}")
 root.resizable(width=False, height=False)
 root.config(background="#14223E")
+
+pygame.mixer.init()
+
+initPitido = pygame.mixer.Sound("sound_effects/silbato.mp3")
+cheersSF = pygame.mixer.Sound("sound_effects/cheers.mp3")
+goalSF = pygame.mixer.Sound("sound_effects/goal.mp3")
+abucheosSF = pygame.mixer.Sound("sound_effects/abucheos.mp3")
 
 # Imágenes de la interfaz
 
@@ -881,6 +1108,12 @@ logoBAROp = Image.open("assets/logoBAR.png")
 logoBAR = ImageTk.PhotoImage(logoBAROp.resize((250, 250)))
 logoBAR_est = ImageTk.PhotoImage(logoBAROp.resize((200, 200)))
 
+scrRedonOp = Image.open("assets/SCORERedondo.png")
+scrRedon = ImageTk.PhotoImage(scrRedonOp.resize((250, 250)))
+
+scrLclOp = Image.open("assets/SCORELocal.png")
+scrLcl = ImageTk.PhotoImage(scrLclOp.resize((250, 250)))
+
 
 # Variables para el funcionamiento del juego
 
@@ -889,12 +1122,15 @@ datos = set()
 firstTeam = None
 secondTeam = None
 
+round = 0
+
 local = None
 localStriker = None
 localKeeper = None
 localBench = []
 localScore = StringVar()
 localScore.set("0")
+localPlayed = False
 
 visiting = None
 visitingStriker = None
@@ -902,8 +1138,11 @@ visitingKeeper = None
 visitingBench = []
 visitingScore = StringVar()
 visitingScore.set("0")
+visitingPlayed = False
 
 visitingPicking = True
+
+ghostKeeperPos = None
 
 playerNum = 0
 
@@ -926,14 +1165,14 @@ keeperList = []
 # Conexion con la Raspberry Pi Pico
 
 ip_server = "0.0.0.0"
-ip_raspberry = "192.168.0.6"
+ip_raspberry = "192.168.18.154"
 server_port = 50000
 enabled = True
 
 threadCoinFlipAnim = threading.Thread(target=coinFlipAnim)
 
 threadPicoRead = threading.Thread(target=readFromPico)
-#threadPicoRead.start()
+threadPicoRead.start()
 
 #threadPicoSend = threading.Thread(target=sendPico)
 #threadPicoSend.start()
