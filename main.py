@@ -16,6 +16,7 @@ def mainMenu(window_width, window_height, Logo):
     
     container = Canvas(root, width=f"{window_width}", height=f"{window_height}", background="#14223E", highlightbackground="#14223E")
     container.pack()
+    container.create_image(600, 500, image=Stars)
     container.create_image(620, 300, image=Logo)
 
     playButton = Button(container, font=("Champions", 35), text="JUGAR", command=lambda:[container.destroy(), initConfig(window_width, window_height)])
@@ -27,11 +28,11 @@ def mainMenu(window_width, window_height, Logo):
     stadisticsBtn = Button(container, font=("Champions", 35), text="ESTADÍSTICAS", command=lambda:[container.destroy(), stadisticsMenu("Manchester City", "MCI")])
     stadisticsBtn.place(x=450, y=625)
 
-    testModulesBtn = Button(container, font=("Champions", 35), text="PROBAR", command=lambda:[container.destroy(), testMenu(window_width, window_height)])
+    testModulesBtn = Button(container, font=("Champions", 35), text="PROBAR", command=lambda:[container.destroy(), endGame("Manchester City")]) #testMenu(window_width, window_height)
     testModulesBtn.place(x=970, y=870)
 
     verLabel = Label(container, font=("Champions", 25), text="VERSIÓN 1.0", bg="#14223E", fg="#FFFFFF")
-    verLabel.place(x=20, y=950)
+    verLabel.place(x=20, y=20)
 
 def stadisticsMenu(team, sig):
     global logoMCI_est, logoBAR_est, logoRMA_est, totalGoals, totalSaves, totalFailed, topStriker, strikerList, keeperList
@@ -282,11 +283,14 @@ def initConfig(window_width, window_height):
     container = Canvas(root, width=f"{window_width}", height=f"{window_height}", background="#14223E", highlightbackground="#14223E")
     container.pack()
 
+    container.create_image(600, 500, image=Stars)
+
+
     configTitle = Label(container, font=("Champions", 40), text="CONFIGURACIÓN INICIAL", bg="#14223E", fg="#FFFFFF")
     configTitle.place(x=30, y=30)
 
     pickTitle = Label(container, font=("ITC Novarese Std Medium", 30), text="ESCOJA DOS EQUIPOS", bg="#14223E", fg="#FFFFFF")
-    pickTitle.place(x=380, y=250)
+    pickTitle.place(x=100, y=250)
 
     MCIButton = Button(container, image=logoMCI, background="#14223E", state="normal", command=lambda:[choosenTeams(MCIButton, "Manchester City", container)])
     MCIButton.place(x=100, y=400)
@@ -819,6 +823,10 @@ def pickAKeeperAux(player_num, strikerCanvas, mode, player, strikerL, keepersLis
 
 def startGame(mode):
     global scrRedon, scrLcl, localStriker, localBench, localPlayed, visitingPlayed, visitingStriker, visitingBench, round, datos
+    root.title(f"{local} vs {visiting}")
+
+    pygame.mixer.music.fadeout(4000)
+
     container = Canvas(root, width=f"{window_width}", height=f"{window_height}", background="#14223E",
                        highlightbackground="#14223E")
     container.pack()
@@ -857,7 +865,7 @@ def startGame(mode):
 
         time.sleep(4)
 
-        sendToPico("read")
+        #sendToPico("read")
 
         pygame.mixer.Sound.fadeout(cheersSF, 2)
 
@@ -880,10 +888,11 @@ def startGame(mode):
             countdown.set(f"{i}s")
             time.sleep(1)
 
-        datos_lista = list(datos)
-        print(datos_lista)
+        #datos_lista = list(datos)
+        #print(datos_lista)
 
-        if handleGoal(datos_lista):
+        if handleGoal(simulateStrike):
+            print(localStriker)
             localScore.set(f"{int(localScore.get())+1}")
             pygame.mixer.Sound.play(goalSF)
             timeto["text"] = "G"
@@ -893,8 +902,41 @@ def startGame(mode):
                 if i == 14:
                     timeto["text"] += "L"
 
-        if not handleGoal(datos_lista):
+            with open("teams-data-base.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            for team in data["Teams"]:
+                if team["Team"] == local:
+                    for player in team["Strikers"]:
+                        if player["Name"] == localStriker:
+                            player["Goals"] = str(int(player["Goals"]) + 1)
+                if team["Team"] == visiting:
+                    for keeper in team["Keepers"]:
+                        if keeper["Name"] == visitingKeeper:
+                            keeper["Failed"] = str(int(keeper["Failed"]) + 1)
+
+            with open("teams-data-base.json", "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=1)
+
+        if not handleGoal(simulateStrike):
             timeto["text"] = f"¡Tapó {visitingKeeper}!"
+
+            with open("teams-data-base.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            for team in data["Teams"]:
+                if team["Team"] == local:
+                    for player in team["Strikers"]:
+                        if player["Name"] == localStriker:
+                            player["Failed"] = str(int(player["Failed"]) + 1)
+                if team["Team"] == visiting:
+                    for keeper in team["Keepers"]:
+                        if keeper["Name"] == visitingKeeper:
+                            keeper["Saves"] = str(int(keeper["Saves"]) + 1)
+
+            with open("teams-data-base.json", "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=1)
+
             pygame.mixer.Sound.play(abucheosSF)
             time.sleep(3)
             pygame.mixer.Sound.fadeout(abucheosSF, 2)
@@ -903,7 +945,7 @@ def startGame(mode):
         localStriker = localBench[0]
         del localBench [0]
 
-        print(datos)
+        #print(datos)
 
         localPlayed = True
         time.sleep(1)
@@ -924,7 +966,7 @@ def startGame(mode):
 
         time.sleep(4)
 
-        sendToPico("read")
+        #sendToPico("read")
 
         pygame.mixer.Sound.fadeout(cheersSF, 2)
 
@@ -947,10 +989,11 @@ def startGame(mode):
             countdown.set(f"{i}s")
             time.sleep(1)
 
-        datos_lista = list(datos)
-        print(datos_lista)
+        #datos_lista = list(datos)
+        #print(datos_lista)
 
-        if handleGoal(datos_lista):
+        if handleGoal(simulateStrike):
+            print(visitingStriker)
             visitingScore.set(f"{int(visitingScore.get())+1}")
             pygame.mixer.Sound.play(goalSF)
             timeto["text"] = "G"
@@ -960,8 +1003,41 @@ def startGame(mode):
                 if i == 14:
                     timeto["text"] += "L"
 
-        if not handleGoal(datos_lista):
-            timeto["text"] = f"¡TAPÓ {localKeeper}!"
+            with open("teams-data-base.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            for team in data["Teams"]:
+                if team["Team"] == visiting:
+                    for player in team["Strikers"]:
+                        if player["Name"] == visitingStriker:
+                            player["Goals"] = str(int(player["Goals"]) + 1)
+                if team["Team"] == local:
+                    for keeper in team["Keepers"]:
+                        if keeper["Name"] == localStriker:
+                            keeper["Failed"] = str(int(keeper["Failed"]) + 1)
+
+            with open("teams-data-base.json", "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=1)
+
+        if not handleGoal(simulateStrike):
+            timeto["text"] = f"¡Tapó {localKeeper}!"
+
+            with open("teams-data-base.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            for team in data["Teams"]:
+                if team["Team"] == visiting:
+                    for player in team["Strikers"]:
+                        if player["Name"] == visitingStriker:
+                            player["Failed"] = str(int(player["Failed"]) + 1)
+                if team["Team"] == local:
+                    for keeper in team["Keepers"]:
+                        if keeper["Name"] == localKeeper:
+                            keeper["Saves"] = str(int(keeper["Saves"]) + 1)
+
+            with open("teams-data-base.json", "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=1)
+
             pygame.mixer.Sound.play(abucheosSF)
             time.sleep(3)
             pygame.mixer.Sound.fadeout(abucheosSF, 2)
@@ -976,6 +1052,7 @@ def startGame(mode):
         time.sleep(1)
         container.destroy()
         roundHandler()
+
 
 def getLogo():
     global local, visiting
@@ -1035,9 +1112,74 @@ def roundHandler():
         startGame("Visiting")
     elif localPlayed and visitingPlayed:
         round = round + 1
+        if round >= 6:
+            if not(localScore.get() == visitingScore.get()):
+                if int(localScore.get()) > int(visitingScore.get()):
+                    return endGame(local)
+                else:
+                    return endGame(visiting)
         localPlayed = False
         visitingPlayed = False
         startGame("Local")
+
+
+def endGame(nameW):
+    pygame.mixer.music.play(-1)
+    logoW = None
+    if nameW == "Manchester City":
+        logoW = logoMCIW
+    elif nameW == "Real Madrid":
+        logoW = logoRMAW
+    elif nameW == "Barcelona FC":
+        logoW = logoBARW
+
+    container = Canvas(root, width=f"{window_width}", height=f"{window_height}", background="#14223E", highlightbackground="#14223E")
+    container.pack()
+
+    container.create_image(600, 300, image=logoW)
+
+    wLabel = Label(container, text=f"{nameW} ha ganado el partido.", font=("Champions", 40), bg="#14223E", foreground="#FFFFFF", width=40, anchor="n")
+    wLabel.place(x=50, y=500)
+
+    backBtn = Button(container, text="VOLVER AL MENÚ", font=("Champions", 40), command=lambda:[container.destroy(), mainMenu(window_width, window_height, Logo)])
+    backBtn.place(x=390, y=700)
+
+    restart()
+
+
+def restart():
+    global datos, firstTeam, secondTeam, round, local, localStriker, localKeeper, localBench, localScore, localPlayed, visiting, visitingStriker, visitingBench, visitingKeeper, visitingScore, visitingPlayed, visitingPicking, ghostKeeperPos, playerNum, wGonnaWin
+    datos = set()
+
+    firstTeam = None
+    secondTeam = None
+
+    round = 1
+
+    local = None
+    localStriker = None
+    localKeeper = None
+    localBench = []
+    localScore = StringVar()
+    localScore.set("0")
+    localPlayed = False
+
+    visiting = None
+    visitingStriker = None
+    visitingKeeper = None
+    visitingBench = []
+    visitingScore = StringVar()
+    visitingScore.set("0")
+    visitingPlayed = False
+
+    visitingPicking = True
+
+    ghostKeeperPos = None
+
+    playerNum = 0
+
+    wGonnaWin = None
+
 
 
 def sendToPico(message):
@@ -1090,23 +1232,33 @@ initPitido = pygame.mixer.Sound("sound_effects/silbato.mp3")
 cheersSF = pygame.mixer.Sound("sound_effects/cheers.mp3")
 goalSF = pygame.mixer.Sound("sound_effects/goal.mp3")
 abucheosSF = pygame.mixer.Sound("sound_effects/abucheos.mp3")
+musicLoop = pygame.mixer.music.load("sound_effects/tema.mp3")
+pygame.mixer.music.play(-1)
 
 # Imágenes de la interfaz
 
 openLogo = Image.open("assets/logo.png")
 Logo = ImageTk.PhotoImage(openLogo.resize((1000, 1000)))
 
+openStars = Image.open("assets/stars.png")
+Stars = ImageTk.PhotoImage(openStars)
+
 logoMCIOp = Image.open("assets/LogoMCI.png")
 logoMCI = ImageTk.PhotoImage(logoMCIOp.resize((250, 250)))
 logoMCI_est = ImageTk.PhotoImage(logoMCIOp.resize((200, 200)))
+logoMCIW = ImageTk.PhotoImage(logoMCIOp.resize((350, 350)))
 
 logoRMAOp = Image.open("assets/LogoRMA.png")
 logoRMA = ImageTk.PhotoImage(logoRMAOp.resize((200, 250)))
 logoRMA_est = ImageTk.PhotoImage(logoRMAOp.resize((150, 200)))
+logoRMAW = ImageTk.PhotoImage(logoRMAOp.resize((300, 350)))
+
 
 logoBAROp = Image.open("assets/logoBAR.png")
 logoBAR = ImageTk.PhotoImage(logoBAROp.resize((250, 250)))
 logoBAR_est = ImageTk.PhotoImage(logoBAROp.resize((200, 200)))
+logoBARW = ImageTk.PhotoImage(logoBAROp.resize((350, 350)))
+
 
 scrRedonOp = Image.open("assets/SCORERedondo.png")
 scrRedon = ImageTk.PhotoImage(scrRedonOp.resize((250, 250)))
@@ -1122,7 +1274,7 @@ datos = set()
 firstTeam = None
 secondTeam = None
 
-round = 0
+round = 1
 
 local = None
 localStriker = None
@@ -1171,8 +1323,8 @@ enabled = True
 
 threadCoinFlipAnim = threading.Thread(target=coinFlipAnim)
 
-threadPicoRead = threading.Thread(target=readFromPico)
-threadPicoRead.start()
+#threadPicoRead = threading.Thread(target=readFromPico)
+#threadPicoRead.start()
 
 #threadPicoSend = threading.Thread(target=sendPico)
 #threadPicoSend.start()

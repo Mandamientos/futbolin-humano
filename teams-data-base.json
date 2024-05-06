@@ -1,44 +1,115 @@
 {
-  "Teams": [
+ "Teams": [
+  {
+   "Team": "Manchester City",
+   "Strikers": [
     {
-      "Team": "Manchester City",
-      "Strikers": [
-        {"Name": "Erling Haaland", "Goals": "0", "Failed": "0"},
-        {"Name": "Julián Álvarez", "Goals": "0", "Failed": "0"},
-        {"Name": "K. De Bruyne", "Goals": "0", "Failed": "0"},
-        {"Name": "Phil Foden", "Goals": "0", "Failed": "0"}
-      ],
-      "Keepers": [
-        {"Name": "Ederson Morae", "Saves": "0", "Failed": "0"},
-        {"Name": "Scott Carson", "Saves": "0", "Failed": "0"}
-      ]
+     "Name": "Erling Haaland",
+     "Goals": "7",
+     "Failed": "6"
     },
     {
-      "Team": "Real Madrid",
-      "Strikers": [
-        {"Name": "Jude Bellingham", "Goals": "0", "Failed": "0"},
-        {"Name": "Luka Modrić", "Goals": "0", "Failed": "0"},
-        {"Name": "Rodrygo Silva", "Goals": "0", "Failed": "0"},
-        {"Name": "Vinicius Jr", "Goals": "0", "Failed": "0"}
-      ],
-      "Keepers": [
-        {"Name": "Andriy Lunin", "Saves": "0", "Failed": "0"},
-        {"Name": "Thibaut Courtois", "Saves": "0", "Failed": "0"}
-      ]
+     "Name": "Juli\u00e1n Alvarez",
+     "Goals": "4",
+     "Failed": "3"
     },
     {
-      "Team": "Barcelona FC",
-      "Strikers": [
-        {"Name": "Ilkay Gündogan", "Goals": "0", "Failed": "0"},
-        {"Name": "João Cancelo", "Goals": "0", "Failed": "0"},
-        {"Name": "Robert Lewandowski", "Goals": "0", "Failed": "0"},
-        {"Name": "Pedri", "Goals": "0", "Failed": "0"}
-        ],
-      "Keepers": [
-        {"Name": "Iñaki Peña", "Saves": "0", "Failed": "0"},
-        {"Name": "Marc-André ter Stegen", "Saves": "0", "Failed": "0"}
-      ]
+     "Name": "K. De Bruyne",
+     "Goals": "5",
+     "Failed": "2"
+    },
+    {
+     "Name": "Phil Foden",
+     "Goals": "4",
+     "Failed": "3"
     }
-  ]
-
+   ],
+   "Keepers": [
+    {
+     "Name": "Ederson Morae",
+     "Saves": "17",
+     "Failed": "5"
+    },
+    {
+     "Name": "Scott Carson",
+     "Saves": "0",
+     "Failed": "0"
+    }
+   ]
+  },
+  {
+   "Team": "Real Madrid",
+   "Strikers": [
+    {
+     "Name": "Jude Bellingham",
+     "Goals": "13",
+     "Failed": "8"
+    },
+    {
+     "Name": "Luka Modri\u0107",
+     "Goals": "6",
+     "Failed": "6"
+    },
+    {
+     "Name": "Rodrygo Silva",
+     "Goals": "7",
+     "Failed": "2"
+    },
+    {
+     "Name": "Vinicius Jr",
+     "Goals": "5",
+     "Failed": "4"
+    }
+   ],
+   "Keepers": [
+    {
+     "Name": "Andriy Lunin",
+     "Saves": "16",
+     "Failed": "14"
+    },
+    {
+     "Name": "Thibaut Courtois",
+     "Saves": "0",
+     "Failed": "0"
+    }
+   ]
+  },
+  {
+   "Team": "Barcelona FC",
+   "Strikers": [
+    {
+     "Name": "Ilkay G\u00fcndogan",
+     "Goals": "2",
+     "Failed": "0"
+    },
+    {
+     "Name": "Jo\u00e3o Cancelo",
+     "Goals": "1",
+     "Failed": "1"
+    },
+    {
+     "Name": "Robert Lewandowski",
+     "Goals": "2",
+     "Failed": "0"
+    },
+    {
+     "Name": "Pedri",
+     "Goals": "1",
+     "Failed": "1"
+    }
+   ],
+   "Keepers": [
+    {
+     "Name": "I\u00f1aki Pe\u00f1a",
+     "Saves": "3",
+     "Failed": "0"
+    },
+    {
+     "Name": "Marc-Andr\u00e9 ter Stegen",
+     "Saves": "0",
+     "Failed": "0"
+    }
+   ]
+  }
+ ]
 }
