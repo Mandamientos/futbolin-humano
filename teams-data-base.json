@@ -5,30 +5,30 @@
    "Strikers": [
     {
      "Name": "Erling Haaland",
-     "Goals": "7",
-     "Failed": "6"
+     "Goals": "55",
+     "Failed": "47"
     },
     {
      "Name": "Juli\u00e1n Alvarez",
-     "Goals": "4",
-     "Failed": "3"
+     "Goals": "28",
+     "Failed": "30"
     },
     {
      "Name": "K. De Bruyne",
-     "Goals": "5",
-     "Failed": "2"
+     "Goals": "25",
+     "Failed": "25"
     },
     {
      "Name": "Phil Foden",
-     "Goals": "4",
-     "Failed": "3"
+     "Goals": "19",
+     "Failed": "21"
     }
    ],
    "Keepers": [
     {
      "Name": "Ederson Morae",
-     "Saves": "17",
-     "Failed": "5"
+     "Saves": "130",
+     "Failed": "57"
     },
     {
      "Name": "Scott Carson",
@@ -42,34 +42,34 @@
    "Strikers": [
     {
      "Name": "Jude Bellingham",
-     "Goals": "13",
-     "Failed": "8"
+     "Goals": "55",
+     "Failed": "53"
     },
     {
      "Name": "Luka Modri\u0107",
-     "Goals": "6",
-     "Failed": "6"
+     "Goals": "35",
+     "Failed": "28"
     },
     {
      "Name": "Rodrygo Silva",
-     "Goals": "7",
-     "Failed": "2"
+     "Goals": "23",
+     "Failed": "25"
     },
     {
      "Name": "Vinicius Jr",
-     "Goals": "5",
-     "Failed": "4"
+     "Goals": "18",
+     "Failed": "23"
     }
    ],
    "Keepers": [
     {
      "Name": "Andriy Lunin",
-     "Saves": "16",
-     "Failed": "14"
+     "Saves": "112",
+     "Failed": "77"
     },
     {
      "Name": "Thibaut Courtois",
-     "Saves": "0",
+     "Saves": "11",
      "Failed": "0"
     }
    ]
@@ -79,29 +79,29 @@
    "Strikers": [
     {
      "Name": "Ilkay G\u00fcndogan",
-     "Goals": "2",
-     "Failed": "0"
+     "Goals": "3",
+     "Failed": "2"
     },
     {
      "Name": "Jo\u00e3o Cancelo",
-     "Goals": "1",
+     "Goals": "3",
      "Failed": "1"
     },
     {
      "Name": "Robert Lewandowski",
      "Goals": "2",
-     "Failed": "0"
+     "Failed": "2"
     },
     {
      "Name": "Pedri",
      "Goals": "1",
-     "Failed": "1"
+     "Failed": "2"
     }
    ],
    "Keepers": [
     {
      "Name": "I\u00f1aki Pe\u00f1a",
-     "Saves": "3",
+     "Saves": "6",
      "Failed": "0"
     },
     {
