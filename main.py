@@ -292,6 +292,10 @@ def testMenu(window_width, window_height):
     sendBtn = Button(container, text='?', font=("Champions", 35), command=lambda:[threadPicoRead.start()])
     sendBtn.place(x=500, y=450)
 
+    backBtn = Button(root, font=("Champions", 35), text="VOLVER", bg="#3562A6", fg="#FFFFFF",
+                 command=lambda: [container.destroy(), mainMenu(window_width, window_height, Logo)])
+    backBtn.place(x=1000, y=900)
+
 # Menú configuración inicial
 def initConfig(window_width, window_height):
 
@@ -1104,10 +1108,17 @@ def varEvent(timeto, container, score):
     timeto["text"] = "Se decidirá un marcador adecuado..."
     time.sleep(2)
 
-    for i in range(0, 100):
+    ms = 0.05
+
+    pygame.mixer.Sound.play(spinSF)
+
+    for i in range(0, 65):
         randomNum = random.randint(0, 7)
         score.set(f"{randomNum}")
-        time.sleep(0.05)
+        ms += 0.003
+        time.sleep(ms)
+
+    time.sleep(3)
 
     container.destroy()
 
@@ -1236,7 +1247,6 @@ def restart():
     wGonnaWin = None
 
 
-
 def sendToPico(message):
     #btn["state"] = "disabled"
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -1292,6 +1302,7 @@ goalSF = pygame.mixer.Sound("sound_effects/goal.mp3")
 abucheosSF = pygame.mixer.Sound("sound_effects/abucheos.mp3")
 musicLoop = pygame.mixer.music.load("sound_effects/tema.mp3")
 varSF = pygame.mixer.Sound("sound_effects/Interrupción  Efecto de sonido.mp3")
+spinSF = pygame.mixer.Sound("sound_effects/spin.mp3")
 pygame.mixer.music.play(-1)
 
 # Imágenes de la interfaz

@@ -5,17 +5,17 @@
    "Strikers": [
     {
      "Name": "Erling Haaland",
-     "Goals": "55",
-     "Failed": "47"
+     "Goals": "60",
+     "Failed": "49"
     },
     {
      "Name": "Juli\u00e1n Alvarez",
-     "Goals": "28",
+     "Goals": "30",
      "Failed": "30"
     },
     {
      "Name": "K. De Bruyne",
-     "Goals": "25",
+     "Goals": "26",
      "Failed": "25"
     },
     {
@@ -27,8 +27,8 @@
    "Keepers": [
     {
      "Name": "Ederson Morae",
-     "Saves": "130",
-     "Failed": "57"
+     "Saves": "135",
+     "Failed": "64"
     },
     {
      "Name": "Scott Carson",
@@ -42,17 +42,17 @@
    "Strikers": [
     {
      "Name": "Jude Bellingham",
-     "Goals": "55",
-     "Failed": "53"
+     "Goals": "63",
+     "Failed": "56"
     },
     {
      "Name": "Luka Modri\u0107",
-     "Goals": "35",
-     "Failed": "28"
+     "Goals": "37",
+     "Failed": "30"
     },
     {
      "Name": "Rodrygo Silva",
-     "Goals": "23",
+     "Goals": "24",
      "Failed": "25"
     },
     {
@@ -64,8 +64,8 @@
    "Keepers": [
     {
      "Name": "Andriy Lunin",
-     "Saves": "112",
-     "Failed": "77"
+     "Saves": "114",
+     "Failed": "82"
     },
     {
      "Name": "Thibaut Courtois",
