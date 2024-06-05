@@ -5,30 +5,30 @@
    "Strikers": [
     {
      "Name": "Erling Haaland",
-     "Goals": "60",
-     "Failed": "49"
+     "Goals": "68",
+     "Failed": "67"
     },
     {
      "Name": "Juli\u00e1n Alvarez",
-     "Goals": "30",
-     "Failed": "30"
+     "Goals": "35",
+     "Failed": "37"
     },
     {
      "Name": "K. De Bruyne",
-     "Goals": "26",
-     "Failed": "25"
+     "Goals": "28",
+     "Failed": "32"
     },
     {
      "Name": "Phil Foden",
-     "Goals": "19",
-     "Failed": "21"
+     "Goals": "23",
+     "Failed": "25"
     }
    ],
    "Keepers": [
     {
      "Name": "Ederson Morae",
-     "Saves": "135",
-     "Failed": "64"
+     "Saves": "171",
+     "Failed": "78"
     },
     {
      "Name": "Scott Carson",
@@ -42,30 +42,30 @@
    "Strikers": [
     {
      "Name": "Jude Bellingham",
-     "Goals": "63",
-     "Failed": "56"
+     "Goals": "72",
+     "Failed": "73"
     },
     {
      "Name": "Luka Modri\u0107",
-     "Goals": "37",
-     "Failed": "30"
+     "Goals": "41",
+     "Failed": "38"
     },
     {
      "Name": "Rodrygo Silva",
-     "Goals": "24",
-     "Failed": "25"
+     "Goals": "27",
+     "Failed": "30"
     },
     {
      "Name": "Vinicius Jr",
-     "Goals": "18",
-     "Failed": "23"
+     "Goals": "20",
+     "Failed": "29"
     }
    ],
    "Keepers": [
     {
      "Name": "Andriy Lunin",
-     "Saves": "114",
-     "Failed": "82"
+     "Saves": "150",
+     "Failed": "89"
     },
     {
      "Name": "Thibaut Courtois",

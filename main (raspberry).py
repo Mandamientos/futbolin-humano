@@ -2,20 +2,21 @@ import socket
 import time
 import network
 import _thread
+import gc
 
-#ssid = "Guillermo"
-#password = "123456789"
+ssid = "Guillermo"
+password = "123456789"
 
-#ssid = "Router P"
-#password = "loco12345"
+# ssid = "Router P"
+# password = "loco12345"
 
-#ssid = "moto"
-#password = "memoski7"
+# ssid = "moto"
+# password = "memoski7"
 
 Running = True
 
-ssid = "Pueblatec"
-password = "Pueblatec1234"
+# ssid = "Pueblatec"
+# password = "Pueblatec1234"
 
 wifi = network.WLAN(network.STA_IF)
 wifi.active(True)
@@ -33,16 +34,24 @@ P5 = machine.Pin(4, machine.Pin.IN)
 P6 = machine.Pin(5, machine.Pin.IN)
 
 led1 = machine.Pin(16, machine.Pin.OUT)
-led2 = machine.Pin(17, machine.Pin.OUT)
-led3 = machine.Pin(18, machine.Pin.OUT)
-led4 = machine.Pin(20, machine.Pin.OUT)
-led5 = machine.Pin(19, machine.Pin.OUT)
+led2 = machine.Pin(18, machine.Pin.OUT)
+led3 = machine.Pin(17, machine.Pin.OUT)
+led4 = machine.Pin(19, machine.Pin.OUT)
+led5 = machine.Pin(20, machine.Pin.OUT)
 led6 = machine.Pin(21, machine.Pin.OUT)
-ledL = machine.Pin(14, machine.Pin.OUT)
+ledL = machine.Pin(10, machine.Pin.OUT)
 ledV = machine.Pin(15, machine.Pin.OUT)
 
+A1 = machine.Pin(13, machine.Pin.OUT)
+A2 = machine.Pin(12, machine.Pin.OUT)
+A3 = machine.Pin(11, machine.Pin.OUT)
 
-SERVER_IP = "192.168.18.234"
+listaEntradas = [A3, A2, A1]
+
+vLed = machine.Pin(14, machine.Pin.OUT)
+# vLed.value(1)
+
+SERVER_IP = "192.168.0.7"
 
 SERVER_PORT = 50000
 
@@ -86,20 +95,20 @@ def goalAnim():
     time.sleep(0.1)
     led1.value(0)
     time.sleep(0.1)
-    
-
 
 
 def localLed():
     ledV.value(0)
     ledL.value(1)
 
+
 def visitingLed():
     ledL.value(0)
     ledV.value(1)
-    
+
 
 def escucharPython():
+    gc.collect()
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(("0.0.0.0", 8080))
     s.listen(1)
@@ -123,6 +132,9 @@ def escucharPython():
                 elif respuesta == "goalA":
                     conexion.close()
                     goalAnim()
+                elif respuesta[0] == "1":
+                    vLed.value(1)
+                    descompNum(int(respuesta[1:]))
             except Exception as e:
                 print("Error en la conexión:", e)
             finally:
@@ -175,6 +187,24 @@ def leerPaletas():
         print("Error en conexión:", e)
     finally:
         l.close()
+    gc.collect()
     escucharPython()
 
+
+def descompNum(num):
+    global listaEntradas
+    A1.value(0)
+    A2.value(0)
+    A2.value(0)
+    i = 0
+    while num != 0:
+        listaEntradas[i].value(num % 10)
+        num //= 10
+        i += 1
+    print(f"{A1.value()}, {A2.value()}, {A3.value()}")
+    time.sleep(3)
+    vLed.value(0)
+
+
+goalAnim()
 escucharPython()

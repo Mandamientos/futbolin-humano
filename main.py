@@ -30,7 +30,7 @@ def mainMenu(window_width, window_height, Logo):
     testModulesBtn = Button(container, font=("Champions", 35), text="PROBAR", command=lambda:[container.destroy(), testMenu(window_width, window_height)]) #testMenu(window_width, window_height)
     testModulesBtn.place(x=970, y=870)
 
-    verLabel = Label(container, font=("Champions", 25), text="VERSIÓN 1.0", bg="#14223E", fg="#FFFFFF")
+    verLabel = Label(container, font=("Champions", 25), text="VERSIÓN 1.1", bg="#14223E", fg="#FFFFFF")
     verLabel.place(x=20, y=20)
 
 
@@ -42,7 +42,7 @@ def aboutMenu():
     container.create_image(600, 200, image=LogoTEC)
 
     etiqueta = Label(container,
-                        text="Autores: Guillermo Sanchez, Johnny Alfaro\n Fundamentos de Sistemas Computacionales\n Ingenieria en Computadores\n 2024 \n Profesor: Jason Leiton\n Creado en Costa Rica \n Version 1.0 \n  ",
+                        text="Autores: Guillermo Sanchez, Johnny Alfaro\n Fundamentos de Sistemas Computacionales\n Ingenieria en Computadores\n 2024 \n Profesor: Jason Leiton\n Creado en Costa Rica \n Version 1.1 \n  ",
                      background="#14223E",
                      fg="#FFFFFF",
                      font=("Champions", 35))
@@ -879,7 +879,7 @@ def startGame(mode):
     roundL = Label(container, text=f"Ronda {round}", font=("Champions", 45), background="#14223E", foreground="#FFFFFF").place(x=500,y=350)
 
     if mode == "Local":
-        #sendToPico("Lled")
+        sendToPico("Lled")
         timeto = Label(container, text=f"Es el turno del {local}.", font=("Champions", 40), width=40, background="#14223E", anchor="n",
                          foreground="#FFFFFF")
         timeto.place(x=60, y=600)
@@ -893,7 +893,7 @@ def startGame(mode):
 
         time.sleep(4)
 
-        #sendToPico("read")
+        sendToPico("read")
 
         pygame.mixer.Sound.fadeout(cheersSF, 2)
 
@@ -916,13 +916,14 @@ def startGame(mode):
             countdown.set(f"{i}s")
             time.sleep(1)
 
-        #datos_lista = list(datos)
-        #print(datos_lista)
+        datos_lista = list(datos)
+        print(datos_lista)
         
-        if handleGoal(simulateStrike):
+        if handleGoal(datos_lista):
             #sendToPico("goalA")
             print(localStriker)
-            localScore.set(f"{int(localScore.get())+1}")
+            if int(localScore.get()) < 7:
+                localScore.set(f"{int(localScore.get())+1}")
             pygame.mixer.Sound.play(goalSF)
             timeto["text"] = "G"
             for i in range(0, 15):
@@ -947,7 +948,7 @@ def startGame(mode):
             with open("teams-data-base.json", "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=1)
 
-        if not handleGoal(simulateStrike):
+        if not handleGoal(datos_lista):
             timeto["text"] = f"¡Tapó {visitingKeeper}!"
 
             with open("teams-data-base.json", "r", encoding="utf-8") as f:
@@ -974,7 +975,7 @@ def startGame(mode):
         localStriker = localBench[0]
         del localBench [0]
 
-        #print(datos)
+        print(datos)
 
         localPlayed = True
         time.sleep(1)
@@ -990,7 +991,7 @@ def startGame(mode):
             roundHandler()
 
     if mode == "Visiting":
-        #sendToPico("Vled")
+        sendToPico("Vled")
         timeto = Label(container, text=f"Es el turno del {visiting}.", font=("Champions", 40), width=40, background="#14223E", anchor="n",
                          foreground="#FFFFFF")
         timeto.place(x=60, y=600)
@@ -1004,7 +1005,7 @@ def startGame(mode):
 
         time.sleep(4)
 
-        #sendToPico("read")
+        sendToPico("read")
 
         pygame.mixer.Sound.fadeout(cheersSF, 2)
 
@@ -1027,13 +1028,14 @@ def startGame(mode):
             countdown.set(f"{i}s")
             time.sleep(1)
 
-        #datos_lista = list(datos)
-        #print(datos_lista)
+        datos_lista = list(datos)
+        print(datos_lista)
 
-        if handleGoal(simulateStrike):
+        if handleGoal(datos_lista):
             print(visitingStriker)
             #sendToPico("goalA")
-            visitingScore.set(f"{int(visitingScore.get())+1}")
+            if int(visitingScore.get()) < 7:
+                visitingScore.set(f"{int(visitingScore.get())+1}")
             pygame.mixer.Sound.play(goalSF)
             timeto["text"] = "G"
             for i in range(0, 15):
@@ -1058,7 +1060,7 @@ def startGame(mode):
             with open("teams-data-base.json", "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=1)
 
-        elif not handleGoal(simulateStrike):
+        elif not handleGoal(datos_lista):
             timeto["text"] = f"¡Tapó {localKeeper}!"
 
             with open("teams-data-base.json", "r", encoding="utf-8") as f:
@@ -1112,15 +1114,36 @@ def varEvent(timeto, container, score):
 
     pygame.mixer.Sound.play(spinSF)
 
-    for i in range(0, 65):
+    newScore = circularSubtract(int(score.get()))
+    print(newScore)
+
+    binaryScore = "1" + str(binaryConverter(int(score.get())))
+    print(binaryScore)
+
+    for i in range(0, 60):
         randomNum = random.randint(0, 7)
         score.set(f"{randomNum}")
         ms += 0.003
         time.sleep(ms)
 
+    sendToPico(binaryScore)
+
+    score.set(f"{newScore}")
+
     time.sleep(3)
 
     container.destroy()
+
+    roundHandler()
+
+def circularSubtract(a, n=8):
+    return (a - 3 + n) % n
+
+def binaryConverter(n):
+    if 0 <= n <= 7:
+        return bin(n)[2:].zfill(3)
+    else:
+        raise ValueError("El número debe estar entre 0 y 7")
 
 def getLogo():
     global local, visiting
@@ -1390,7 +1413,7 @@ keeperList = []
 # Conexion con la Raspberry Pi Pico
 
 ip_server = "0.0.0.0"
-ip_raspberry = "192.168.18.154"
+ip_raspberry = "192.168.0.4"
 server_port = 50000
 enabled = True
 
